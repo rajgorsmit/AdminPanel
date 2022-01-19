@@ -1,0 +1,26 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="AdminMaster.Master.cs" Inherits="AdminPanel.AdminMaster" %>
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <asp:ContentPlaceHolder ID="head" runat="server">    
+        <head>
+            <title></title>
+            <link rel="stylesheet" href="Content/Navbar.css" />
+        </head>
+    </asp:ContentPlaceHolder>
+
+<body runat="server">
+<asp:ContentPlaceHolder ID="MainBody" runat="server">
+
+<div class="topnav">
+  <a class="active" href="#home">Home</a>
+  <a href="#news">News</a>
+  <a href="#contact">Contact</a>
+  <a href="#about">About</a>
+</div>
+       
+</asp:ContentPlaceHolder>
+</body>
+
+</html>
