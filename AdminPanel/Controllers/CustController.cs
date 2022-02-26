@@ -15,34 +15,41 @@ namespace AdminPanel.Controllers
 {
     public class CustController : Controller
     {
-        // GET: Cust
+        // GET: Cust        
         public void Index()
         {
-            Response.Redirect("https://localhost:44371/RegisterForm.aspx");
+            if (Session["ID"] == null) { Response.Redirect("https://localhost:44371/RegisterForm.aspx"); }
+            else { Response.Redirect("https://localhost:44371/Dashboard.aspx"); }
         }
 
-        public bool CheckIfEmailExist(string Email) {
-            string str = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Mr\\source\\repos\\AdminWeb\\AdminWeb\\App_Data\\MainData.mdf;Integrated Security=True";
-            SqlConnection con = new SqlConnection(str);
-            SqlCommand cmd = new SqlCommand("Select id from Users where Email= @Email", con);
-            cmd.Parameters.AddWithValue("@Email", Email);
-            con.Open();
-            var nId = cmd.ExecuteScalar();
-            if (nId != null)
-            { return true;  }
-            else
-            { return false; }            
+        //  To check if Username, Email or Password is in DB or not pass 1 to id 
+        //  To check if email is in DB or not pass 2 to id 
+        public bool CheckIfKeyExist(string Email=null, string Uname=null, string Number=null) {                        
+                string str = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Mr\\source\\repos\\AdminWeb\\AdminWeb\\App_Data\\MainData.mdf;Integrated Security=True";
+                SqlConnection con = new SqlConnection(str);
+                SqlCommand cmd = new SqlCommand("Select id from Users where UName= @Uname or Email=@Email or Number='@Number'", con);
+                cmd.Parameters.AddWithValue("@UName", Uname);
+                cmd.Parameters.AddWithValue("@Email", Email);
+                cmd.Parameters.AddWithValue("@Number", Number);
+                con.Open();
+                var nId = cmd.ExecuteScalar();
+                if (nId != null)
+                { return true; }
+                else
+                { return false; }                        
         }
-
+        
         public string InsertCustReg(CustDB custdb, string JsonLog)
         {
             JObject obj = JObject.Parse(JsonLog);
-            if (!CheckIfEmailExist((string)obj["Email"]))
+            if (!CheckIfKeyExist((string)obj["Email"], (string)obj["UName"], (string)obj["Number"]))   
             {
                 string str = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Mr\\source\\repos\\AdminWeb\\AdminWeb\\App_Data\\MainData.mdf;Integrated Security=True";
                 SqlConnection cn = new SqlConnection(str);
-                SqlCommand cmd = new SqlCommand("CustSP", cn);
-                cmd.CommandType = CommandType.StoredProcedure;
+                SqlCommand cmd = new SqlCommand("CustSP", cn)
+                {
+                    CommandType = CommandType.StoredProcedure
+                };
 
                 cmd.Parameters.AddWithValue("@case", 1);
                 cmd.Parameters.AddWithValue("@id", custdb.ID = (string)obj["Id"]);
@@ -65,39 +72,34 @@ namespace AdminPanel.Controllers
                 return Convert.ToString(JsonLog);
             }
             else {
-                Response.Write("");
+                Response.Write("<script>alert('Account with the same email already exists');</script>");
                 return "Error : { ErrorCode:404, ErrorStatus='Email Already Exist' }";
             }
         }
 
-        public ActionResult LogInFunc(CustDB custdb, string JsonLog)
+        public ViewResult LogInFunc(CustDB custdb, string JsonLog)
         {
             JObject obj = JObject.Parse(JsonLog);
-            Session["ID"] = custdb.ID;
-            SqlConnection con = new SqlConnection(ConfigurationManager.ConnectionStrings["AccTypeReg"].ToString());
-            try
+            string str = "Data Source=(LocalDB)\\MSSQLLocalDB;AttachDbFilename=C:\\Users\\Mr\\source\\repos\\AdminWeb\\AdminWeb\\App_Data\\MainData.mdf;Integrated Security=True";
+            SqlConnection con = new SqlConnection(str);
+            SqlCommand cmd = new SqlCommand("Select count(id) from Users where Email=@Email;", con);
+            cmd.Parameters.AddWithValue("@Email", obj["Email"].ToString());            
+            con.Open();            
+            var nId = cmd.ExecuteScalar();            
+            if (nId!=null)
             {
+                SqlCommand cmd1 = new SqlCommand("CustSP", con);
+                cmd1.CommandType = CommandType.StoredProcedure;
+                cmd1.Parameters.AddWithValue("@case", 0);
+                cmd1.Parameters.Add("@InsertedId", SqlDbType.Int).Direction = ParameterDirection.Output;
                 con.Open();
-                string qry = "select * from Users where Email='" + custdb.Email + "' and Password='" + custdb.Password + "'";
-                SqlCommand cmd = new SqlCommand(qry, con);
-                SqlDataReader sdr = cmd.ExecuteReader();
-                if (sdr.Read())
-                {
-                    Session["ID"] = custdb.ID;
-                    con.Close();
-                    return View("/Dashboard.aspx");
-                }
-                else
-                {
-                    con.Close();
-                    //Account does'nt exists
-                    return null;
-                }
+                cmd1.ExecuteNonQuery();
+                con.Close();
+                Session["ID"] = cmd1.Parameters["@InsertedId"].Value.ToString();
+                return View("<p style=color:green;>Success</p>");
             }
-            catch (Exception ex)
-            {
-                Response.Write("Error: " + ex);
-                return View("/.aspx");
+            else {
+                return View("<p style=color:green;>No Account with similar email found!</p>");
             }
         }
 
@@ -141,10 +143,10 @@ namespace AdminPanel.Controllers
             }
             catch (Exception ex)
             {
-                Response.Write("Error: " + ex);
+                Response.Write("Error: " + ex);                
             }
             return retJson;
-        }
+        }   
 
 
         public string GetCity(string StateId)

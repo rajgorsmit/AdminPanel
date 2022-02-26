@@ -8,9 +8,10 @@ namespace AdminPanel.Controllers
 {
     public class HomeController : Controller
     {
-        public ActionResult Index()
+        public void Index()
         {
-            return View("/Dashboard.aspx");
+            if (Session["ID"] == null) { Response.Redirect("https://localhost:44371/RegisterForm.aspx"); }
+            else { Response.Redirect("https://localhost:44371/Dashboard.aspx"); }
         }
 
         public ActionResult About()

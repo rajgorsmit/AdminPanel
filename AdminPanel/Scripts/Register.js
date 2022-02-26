@@ -73,10 +73,7 @@ function GetCity(){
 }
 
 function SubmitForm()
-{
-        var formEl = document.forms.RegisterForm;
-        var formData = new FormData(formEl);
-	
+{     		
         var Fname = $('#txtFname').val();
         var Lname = $('#txtLname').val();
         var Age = $('#txtAge').val();
@@ -87,31 +84,35 @@ function SubmitForm()
         var UName = $('#UNameInput').val();
         var City = $('#CityDDL option:selected').text();
         var State = $('#StateDDL option:selected').text();
-
- 	    var CustDB=
-        {
-        Fname: Fname,
-        Lname: Lname,
-        Age: Age,
-        Number: Number,
-        Email: Email,
-        Password: Password,
-        AccType: AccType,
-        City: City,
-        State: State,
-		UName: UName
-        };
-             $.ajax({
-                type: 'POST',
-                dataType: 'text',
-                url: "Cust/InsertCustReg",
-                data: "JsonLog=" + JSON.stringify(CustDB),
-                success: function (returnPayload) {
-					window.location.href = "~/Dashboard.aspx";
-                },  
-                processData: false,
-                async: false
-            });        
+			if (Fname!=null || Lname!=null || Age!=null || Number!=null || City!=null || AccType!=null || State!=null || Email!=null || Pasword!=null){
+				var CustDB=
+				{
+				Fname: Fname,
+				Lname: Lname,
+				Age: Age,
+				Number: Number,
+				Email: Email,
+				Password: Password,
+				AccType: AccType,
+				City: City,
+				State: State,
+				UName: UName
+				};
+					 $.ajax({
+						type: 'POST',
+						dataType: 'text',
+						url: "Cust/InsertCustReg",
+						data: "JsonLog=" + JSON.stringify(CustDB),
+						success: function (returnPayload) {
+							window.location.href = "~/Dashboard.aspx";
+						},  
+						processData: false,
+						async: false
+					});        
+			}			
+			else {
+				alert('Please fill in all fields');
+			}	
 }
 
 

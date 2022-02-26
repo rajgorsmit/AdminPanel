@@ -1,10 +1,20 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/AdminMaster.Master" AutoEventWireup="true" CodeBehind="Users.aspx.cs" Inherits="AdminPanel.Users" %>
 <asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
-    <form id="form1" runat="server">
-    <h1 style="color:cadetblue">All Users</h1> <hr /><br /><br />
+</asp:Content>
+
+<asp:Content ID="Content3" ContentPlaceHolderID="MainBody" runat="server">
+        <style>
+            body {
+                background-color:lightgray;
+            }
+        </style>
+        <form id="form1" runat="server">
+            <br /><br /><br /><br />
         <center>
+            <hr /><h1 style="color:cadetblue">All Users</h1> <hr /><br />
         
-        <asp:GridView runat="server" AutoGenerateColumns="False" DataKeyNames="id" DataSourceID="MainDataSource" CellPadding="4" ForeColor="#333333" GridLines="None">
+        
+        <asp:GridView runat="server" AutoGenerateColumns="False" DataKeyNames="id" DataSourceID="MainDataSource" CellPadding="4" ForeColor="#333333" GridLines="None" Width="1711px">
             <AlternatingRowStyle BackColor="White" />
         <Columns>
             <asp:BoundField DataField="id" HeaderText="id" InsertVisible="False" ReadOnly="True" SortExpression="id" />
@@ -32,11 +42,12 @@
             <SortedAscendingHeaderStyle BackColor="#6D95E1" />
             <SortedDescendingCellStyle BackColor="#E9EBEF" />
             <SortedDescendingHeaderStyle BackColor="#4870BE" />
-    </asp:GridView>
+    </asp:GridView> <hr /><br />
 
-    <h1 style="color:cadetblue">Reported Users</h1> <hr /><br /><br />
+    <br /><br />
+    <hr /><h1 style="color:cadetblue">Reported Users</h1> <hr /><br />
     
-    <asp:GridView runat="server" AutoGenerateColumns="False" CellPadding="4" DataKeyNames="id" DataSourceID="ReportedUsersSrc" ForeColor="#333333" GridLines="None">
+    <asp:GridView runat="server" AutoGenerateColumns="False" CellPadding="4" DataKeyNames="id" DataSourceID="ReportedUsersSrc" ForeColor="#333333" GridLines="None" Width="1711px">
         <AlternatingRowStyle BackColor="White" />
         <Columns>
             <asp:BoundField DataField="id" HeaderText="id" InsertVisible="False" ReadOnly="True" SortExpression="id" />
@@ -64,13 +75,14 @@
         <SortedAscendingHeaderStyle BackColor="#246B61" />
         <SortedDescendingCellStyle BackColor="#D4DFE1" />
         <SortedDescendingHeaderStyle BackColor="#15524A" />
-        </asp:GridView>
-
+        </asp:GridView> <hr />
+        
         <asp:SqlDataSource ID="ReportedUsersSrc" runat="server" ConnectionString="<%$ ConnectionStrings:C:\USERS\MR\SOURCE\REPOS\ADMINWEB\ADMINWEB\APP_DATA\MAINDATA.MDFConnectionString %>" SelectCommand="SELECT * FROM [Users]"></asp:SqlDataSource>
 
     <asp:SqlDataSource ID="MainDataSource" runat="server" ConnectionString="<%$ ConnectionStrings:C:\USERS\MR\SOURCE\REPOS\ADMINWEB\ADMINWEB\APP_DATA\MAINDATA.MDFConnectionString %>" SelectCommand="SELECT * FROM [Users]"></asp:SqlDataSource>
 </center>
 </form>
+<script src="Scripts/OnQuit.js"></script>
 </asp:Content>
 
 

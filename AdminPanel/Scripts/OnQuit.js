@@ -1,14 +1,20 @@
-﻿<script language="JavaScript" type="text/javascript">
-    window.onbeforeunload = confirmExit;
-    function confirmExit() {
-    return "Are you sure you want to Quit?";
-    }
-    $(function() {
-        $("a").click(function() {
-            window.onbeforeunload = null;
-        });
-        $("input").click(function() {
-            window.onbeforeunload = null;
-        });
-    });
-</script>
+﻿$(document).ready(function() {
+    SetUserName();
+});
+
+function SetUserName(){
+$.ajax({
+	type: 'GET',
+	dataType: 'text',
+	url: "Cust/GetDataForProfile",
+	data: null,
+	success: function (returnPayload, retJson) {		
+		if(retJson == "success"){
+			var Datas = JSON.parse(returnPayload);			
+			var i=0;			
+			$("span.admin_name").text(Datas[0].UName);			
+		}
+	}	               	
+}	
+);
+}
